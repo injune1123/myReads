@@ -1,6 +1,7 @@
-
-import React from 'react'
-import * as BooksAPI from './BooksAPI'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import * as BooksAPI from './BooksAPI';
+import { Route } from 'react-router-dom';
 import './App.css'
 
 class BookListItem extends React.Component{
@@ -106,7 +107,7 @@ class BooksApp extends React.Component {
     render() {
         return (
             <div className="app">
-                {this.state.showSearchPage ? (
+                <Route exact path="/search" render={() => (
                     <div className="search-books">
                         <div className="search-books-bar">
                             <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
@@ -128,7 +129,8 @@ class BooksApp extends React.Component {
                             </ol>
                         </div>
                     </div>
-                ) : (
+                )}/>
+                <Route exact path="/" render={() => (
                     <div className="list-books">
                         <div className="list-books-title">
                             <h1>MyReads</h1>
@@ -144,12 +146,12 @@ class BooksApp extends React.Component {
                                                     (books) => books.onShelf === 'currentlyReading'
                                                 )
                                                 .map(
-                                                (book, index) => <BookListItem
-                                                    book={book}
-                                                    key={index}
-                                                    handleSelect = {this.switchShelf}
-                                                />
-                                            )}
+                                                    (book, index) => <BookListItem
+                                                        book={book}
+                                                        key={index}
+                                                        handleSelect = {this.switchShelf}
+                                                    />
+                                                )}
 
                                         </ol>
                                     </div>
@@ -166,7 +168,7 @@ class BooksApp extends React.Component {
                                                     (book, index) => <BookListItem
                                                         book={book}
                                                         key={index}
-                                                        handleSelect = {this.handleSelect}
+                                                        handleSelect = {this.switchShelf}
                                                     />
                                                 )
                                             }
@@ -185,7 +187,7 @@ class BooksApp extends React.Component {
                                                     (book, index) => <BookListItem
                                                         book={book}
                                                         key={index}
-                                                        handleSelect = {this.handleSelect}
+                                                        handleSelect = {this.switchShelf}
                                                     />
                                                 )
                                             }
@@ -195,10 +197,10 @@ class BooksApp extends React.Component {
                             </div>
                         </div>
                         <div className="open-search">
-                            <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+                            <Link to="/search">Add a book</Link>
                         </div>
                     </div>
-                )}
+                )}/>
             </div>
         )
     }
