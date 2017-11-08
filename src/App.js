@@ -25,7 +25,7 @@ class BookListItem extends React.Component{
                         </div>
                     </div>
                     <div className="book-title">{this.props.book.title}</div>
-                    {this.props.book.authors.map((author, index)=> <div className="book-authors" key={index}>author</div>)}
+                    {this.props.book.authors && this.props.book.authors.map((author, index)=> <div className="book-authors" key={index}>{author}</div>)}
                 </div>
             </li>
         )
@@ -87,30 +87,98 @@ class BooksApp extends React.Component {
             },
 
         ],
+        searchResults: [
+        ],
+        searchQuery: ''
     };
+
+    updateSearchQuery = (newQuery) => {
+        this.setState(
+            {searchQuery:newQuery.trim()}
+        )
+        BooksAPI.search(newQuery, 10).then((books) => {
+
+            // get books based on the query
+            console.log("after search API call", books)
+
+            //format the data
+            if(books && books.constructor === Array) {
+                // set state
+                books = this.formatBookData(books);
+                this.setState({searchResults:books});
+
+                console.log("this.setState?", this.setState)
+            }
+        })
+    };
+
+    formatBookData = (books) => {
+        console.log("what", books)
+        return books.map((book) => {
+                return {
+                    title: book.title,
+                    authors: book.authors,
+                    imgURL: book.imageLinks.thumbnail,
+                    onShelf: 'none',
+                }
+            }
+        )
+    }
 
     switchShelf = (shelfName, book) => {
         //clone array
         let updatedReads = this.state.myReads.slice();
         //update the array
-        updatedReads[this.state.myReads.indexOf(book)]["onShelf"] = shelfName;
-        this.setState(
-            {myReads: updatedReads}
-        )
+        // find the book in my Reads
+        let indexOfBook = this.state.myReads.indexOf(book);
+
+        if (indexOfBook !== -1) {
+            updatedReads[indexOfBook]["onShelf"] = shelfName;
+            this.setState(
+                {myReads: updatedReads}
+            )
+        }else{
+
+            book["onShelf"] = shelfName;
+            updatedReads.push(book);
+            console.log("updatedReads", updatedReads);
+            this.setState(
+                {myReads: updatedReads}
+            )
+        }
+
+        let updatedSearchResults = this.state.searchResults.slice();
+
+        let indexOfSearchResults = this.state.searchResults.indexOf(book);
+        if (indexOfSearchResults !== -1){
+            updatedSearchResults[indexOfSearchResults]["onShelf"] = shelfName;
+            this.setState(
+                {searchResults: updatedSearchResults}
+            )
+        }
 
     };
-    // componentDidMount () {
-    //     BooksAPI.getAll().then((books) => {
-    //         console.log("getAll API call", books)
-    //     })
-    // };
+    componentDidMount () {
+
+        BooksAPI.search("j", 10).then((books) => {
+
+
+            //format the data
+            if(books && books.constructor === Array) {
+                // set state
+                books = this.formatBookData(books);
+                this.setState({searchResults:books});
+            }
+        })
+
+    };
     render() {
         return (
             <div className="app">
                 <Route exact path="/search" render={() => (
                     <div className="search-books">
                         <div className="search-books-bar">
-                            <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
+                            <Link className="close-search" to="/">Close</Link>
                             <div className="search-books-input-wrapper">
                                 {/*
                                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -119,13 +187,17 @@ class BooksApp extends React.Component {
                                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                                  you don't find a specific author or title. Every search is limited by search terms.
                                  */}
-                                <input type="text" placeholder="Search by title or author"/>
-
+                                <input type="text" placeholder="Search by title or author" onChange={(e) => this.updateSearchQuery(e.target.value)} value={this.state.searchQuery}/>
                             </div>
                         </div>
                         <div className="search-books-results">
                             <ol className="books-grid">
-
+                                {this.state.searchResults.map(
+                                    (book, index) => <BookListItem
+                                        book={book}
+                                        key={index}
+                                        handleSelect = {this.switchShelf}
+                                    />)}
                             </ol>
                         </div>
                     </div>
