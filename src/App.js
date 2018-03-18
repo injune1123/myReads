@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import { Route } from 'react-router-dom';
 import './App.css'
+import default_book_cover from './img/default_book_cover.jpg'
 
 class BookListItem extends React.Component{
 
@@ -113,12 +114,11 @@ class BooksApp extends React.Component {
     };
 
     formatBookData = (books) => {
-        console.log("what", books)
         return books.map((book) => {
                 return {
                     title: book.title,
                     authors: book.authors,
-                    imgURL: book.imageLinks.thumbnail,
+                    imgURL: book.imageLinks ? book.imageLinks.thumbnail : default_book_cover,
                     onShelf: 'none',
                 }
             }
@@ -138,7 +138,6 @@ class BooksApp extends React.Component {
                 {myReads: updatedReads}
             )
         }else{
-
             book["onShelf"] = shelfName;
             updatedReads.push(book);
             console.log("updatedReads", updatedReads);
@@ -160,13 +159,11 @@ class BooksApp extends React.Component {
     };
     componentDidMount () {
 
-        BooksAPI.search("j", 10).then((books) => {
-
-
-            //format the data
+        BooksAPI.getAll().then((books) => {
             if(books && books.constructor === Array) {
-                // set state
+                //format the data
                 books = this.formatBookData(books);
+                // set state
                 this.setState({searchResults:books});
             }
         })
