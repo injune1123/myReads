@@ -3,17 +3,23 @@ import { Link } from 'react-router-dom';
 import { Route } from 'react-router-dom';
 
 import BookListItem from './components/BookListItem'
+import SearchBooks from './components/SearchBooks/SearchBooks'
+import Bookshelf from './components/Bookshelf'
+
 import './App.css'
 import default_book_cover from './img/default_book_cover.jpg'
 import * as BooksAPI from './BooksAPI';
 
+let shelfTierInfo =[{name:"Currently Reading", value:"currentlyReading"},
+                    {name:"Want to Read", value:"wantToRead"},
+                    {name:"Read", value:"read"}]
 
 class BooksApp extends React.Component {
     state = {
         showSearchPage: false,
         myReads: [],
         searchResults: [],
-        searchQuery: ''
+        searchQuery: '',
     };
 
     updateSearchQuery = (newQuery) => {
@@ -112,31 +118,12 @@ class BooksApp extends React.Component {
         return (
             <div className="app">
                 <Route exact path="/search" render={() => (
-                    <div className="search-books">
-                        <div className="search-books-bar">
-                            <Link className="close-search" to="/">Close</Link>
-                            <div className="search-books-input-wrapper">
-                                {/*
-                                 NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                                 You can find these search terms here:
-                                 https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-                                 However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                                 you don't find a specific author or title. Every search is limited by search terms.
-                                 */}
-                                <input type="text" placeholder="Search by title or author" onChange={(e) => this.updateSearchQuery(e.target.value)} value={this.state.searchQuery}/>
-                            </div>
-                        </div>
-                        <div className="search-books-results">
-                            <ol className="books-grid">
-                                {this.state.searchResults.map(
-                                    (book, index) => <BookListItem
-                                        book={book}
-                                        key={index}
-                                        handleSelect = {this.switchShelf}
-                                    />)}
-                            </ol>
-                        </div>
-                    </div>
+                    <SearchBooks
+                        updateSearchQuery = {this.updateSearchQuery}
+                        searchQuery = {this.state.searchQuery}
+                        searchResults={this.state.searchResults}
+                        switchShelf={this.switchShelf}
+                    />
                 )}/>
                 <Route exact path="/" render={() => (
                     <div className="list-books">
@@ -145,63 +132,14 @@ class BooksApp extends React.Component {
                         </div>
                         <div className="list-books-content">
                             <div>
-                                <div className="bookshelf">
-                                    <h2 className="bookshelf-title">Currently Reading</h2>
-                                    <div className="bookshelf-books">
-                                        <ol className="books-grid">
-                                            {this.state.myReads
-                                                .filter(
-                                                    (books) => books.onShelf === 'currentlyReading'
-                                                )
-                                                .map(
-                                                    (book, index) => <BookListItem
-                                                        book={book}
-                                                        key={index}
-                                                        handleSelect = {this.switchShelf}
-                                                    />
-                                                )}
-
-                                        </ol>
-                                    </div>
-                                </div>
-                                <div className="bookshelf">
-                                    <h2 className="bookshelf-title">Want to Read</h2>
-                                    <div className="bookshelf-books">
-                                        <ol className="books-grid">
-                                            {this.state.myReads
-                                                .filter(
-                                                    (books) => books.onShelf === 'wantToRead'
-                                                )
-                                                .map(
-                                                    (book, index) => <BookListItem
-                                                        book={book}
-                                                        key={index}
-                                                        handleSelect = {this.switchShelf}
-                                                    />
-                                                )
-                                            }
-                                        </ol>
-                                    </div>
-                                </div>
-                                <div className="bookshelf">
-                                    <h2 className="bookshelf-title">Read</h2>
-                                    <div className="bookshelf-books">
-                                        <ol className="books-grid">
-                                            {this.state.myReads
-                                                .filter(
-                                                    (books) => books.onShelf === 'read'
-                                                )
-                                                .map(
-                                                    (book, index) => <BookListItem
-                                                        book={book}
-                                                        key={index}
-                                                        handleSelect = {this.switchShelf}
-                                                    />
-                                                )
-                                            }
-                                        </ol>
-                                    </div>
-                                </div>
+                                {shelfTierInfo.map(shelfTier=>
+                                    <Bookshelf
+                                    shelfName = {shelfTier.name}
+                                    reads = {this.state.myReads}
+                                    switchShelf={this.switchShelf}
+                                    shelfMatchingString={shelfTier.value}
+                                    />
+                                )}
                             </div>
                         </div>
                         <div className="open-search">
