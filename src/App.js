@@ -87,6 +87,9 @@ class BooksApp extends React.Component {
                 searchResults[i]["onShelf"] = shelfName;
             }
         }
+        //persist updated book info using api
+        BooksAPI.update(book,shelfName)
+
         // update myReads and searchResults state
         this.setState({myReads: myReads})
         this.setState({searchResults: searchResults})
