@@ -17,7 +17,8 @@ function SearchBooks(props) {
       updateSearchQuery = {props.updateSearchQuery}
       searchQuery = {props.searchQuery}
       />
-      <SearchResults 
+      <SearchResults
+          searchQuery = {props.searchQuery}
           searchResults={props.searchResults} 
           switchShelf={props.switchShelf}
       />

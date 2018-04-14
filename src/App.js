@@ -64,7 +64,7 @@ class BooksApp extends React.Component {
 
     switchShelf = (shelfName, book) => {
         /* shall update myReads and searchResults state */
-        var myReads = this.state.myReads;
+        var myReads = [ ... this.state.myReads];
         var searchResults = this.state.searchResults;
         var bookId = book.id;
         var onShelf = false;
@@ -103,19 +103,7 @@ class BooksApp extends React.Component {
                 // set state
                 this.setState({myReads:books});
             }
-        }).then(
-            // set initial book search
-            BooksAPI.getAll().then((searchedBooksOri) => {
-                if(searchedBooksOri && searchedBooksOri.constructor === Array) {
-                    //format the data
-                    searchedBooksOri = this.formatBookData(searchedBooksOri);
-                    //merge books from search with users books on shelves
-                    let searchedBooks = this.mergeSearchedBooksAndmReads(searchedBooksOri, this.state.myReads);
-                    // set state
-                    this.setState({searchResults:searchedBooks});
-                }
-            })
-       )
+        })
     };
     render() {
         return (
