@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Route } from 'react-router-dom';
+import {debounce} from 'throttle-debounce';
 
-import BookListItem from './components/BookListItem'
 import SearchBooks from './components/SearchBooks/SearchBooks'
 import Bookshelf from './components/Bookshelf'
 
@@ -26,19 +26,21 @@ class BooksApp extends React.Component {
         this.setState(//update the search input box UI
             {searchQuery:newQuery}
         )
-        BooksAPI.search(newQuery, 10).then((searchedBooksOri) => {// get searchedBooks based on the query
-            if(searchedBooksOri && searchedBooksOri.constructor === Array) {
-                searchedBooksOri = this.formatBookData(searchedBooksOri);//format the data
-                //merge books from search with users books on shelves
-                let searchedBooks = this.mergeSearchedBooksAndmReads(searchedBooksOri, this.state.myReads);
-                this.setState({searchResults:searchedBooks});// set state
-
+        debounce(500, () => {
+            BooksAPI.search(newQuery, 10).then((searchedBooks) => {// get searchedBooks based on the query
+            if(searchedBooks && searchedBooks.constructor === Array) {
+                const formattedSearchedBooks = this.formatBookData(searchedBooks);//format the data
+                //replace books from search with users books on shelves
+                //to keep the status of books that already have status set
+                let books = this.mergeSearchedBooksAndmReads(formattedSearchedBooks, this.state.myReads);
+                this.setState({searchResults:books});
             }
-        })
+        }).catch(() => {this.setState({searchResults: []});})
+    })()
     };
 
-    mergeSearchedBooksAndmReads = function (searchedBooksOri, myReads){
-        searchedBooksOri.forEach((book) =>{
+    mergeSearchedBooksAndmReads = function (searchedBooks, myReads){
+        searchedBooks.forEach((book) =>{
             for (let i = 0; i < myReads.length ; i++){
                 let curBookMyRead = myReads[i]
                 if (book.id === curBookMyRead.id){
@@ -46,7 +48,7 @@ class BooksApp extends React.Component {
                 }
             }
         })
-        return searchedBooksOri
+        return searchedBooks
     }
 
     formatBookData = (books) => {
