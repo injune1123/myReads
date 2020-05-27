@@ -17,7 +17,7 @@ const componentStyle = {
 const textStyle = {
   fontSize: "40px",
   textAlign: "center",
-  color:"rgb(46, 124, 49)",
+  color:"#0a3055",
   fontFamily: "Times New Roman, Times, serif",
 }
 

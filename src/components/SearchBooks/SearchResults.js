@@ -7,7 +7,7 @@ import SearchPrompt from './SearchPrompt';
 function SearchResults (props){
   return (
     <div className="search-books-results">
-      {props.searchQuery ?
+      {props.searchQuery ? (
         <ol className="books-grid">
           {props.searchResults.map(
               (book, index) => <BookListItem
@@ -16,9 +16,10 @@ function SearchResults (props){
                   handleSelect = {props.switchShelf}
               />
           )}
-        </ol>
-        :
-        <SearchPrompt/>}
+        </ol>) : <SearchPrompt/>}
+        
+        
+       { props.searchHasError && <SearchPrompt/>}
     </div>
   )
 }
@@ -27,6 +28,7 @@ SearchResults.propTypes = {
   searchResults: PropTypes.array.isRequired,
   switchShelf: PropTypes.func.isRequired,
   searchQuery: PropTypes.string.isRequired,
+  searchHasError: PropTypes.bool.isRequired
 }
 
 export default SearchResults;

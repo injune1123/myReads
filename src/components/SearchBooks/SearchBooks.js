@@ -21,6 +21,7 @@ function SearchBooks(props) {
           searchQuery = {props.searchQuery}
           searchResults={props.searchResults} 
           switchShelf={props.switchShelf}
+          searchHasError={props.searchHasError}
       />
   </div>
   )

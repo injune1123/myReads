@@ -20,6 +20,7 @@ class BooksApp extends React.Component {
         myReads: [],
         searchResults: [],
         searchQuery: '',
+        searchHasError: false
     };
 
     updateSearchQuery = (newQuery) => {
@@ -35,7 +36,7 @@ class BooksApp extends React.Component {
                 let books = this.mergeSearchedBooksAndmReads(formattedSearchedBooks, this.state.myReads);
                 this.setState({searchResults:books});
             }
-        }).catch(() => {this.setState({searchResults: []});})
+        }).catch(() => {this.setState({searchResults: [], searchHasError: true});})
     })()
     };
 
@@ -90,12 +91,13 @@ class BooksApp extends React.Component {
             }
         }
         //persist updated book info using api
-        BooksAPI.update(book,shelfName)
-
-        // update myReads and searchResults state
-        this.setState({myReads: myReads})
-        this.setState({searchResults: searchResults})
+        BooksAPI.update(book,shelfName).then(()=> {
+            // update myReads and searchResults state
+            this.setState({myReads: myReads})
+            this.setState({searchResults: searchResults})
+        })
     };
+
     componentDidMount () {
         // set initial books on shelf
         BooksAPI.getAll().then((books) => {
@@ -116,6 +118,7 @@ class BooksApp extends React.Component {
                         searchQuery = {this.state.searchQuery}
                         searchResults={this.state.searchResults}
                         switchShelf={this.switchShelf}
+                        searchHasError={this.state.searchHasError}
                     />
                 )}/>
                 <Route exact path="/" render={() => (

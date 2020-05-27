@@ -18,7 +18,7 @@ function BookListItem (props) {
                             <select onChange={(e) => {
                                 props.handleSelect(e.target.value, props.book)
                             }} value={props.book.onShelf || 'none'}>
-                            <option value="none" disabled>Move to...</option>
+                            <option value="idle" disabled>Move to...</option>
                             <option value="currentlyReading">Currently Reading</option>
                             <option value="wantToRead">Want to Read</option>
                             <option value="read">Read</option>
