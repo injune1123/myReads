@@ -1,5 +1,5 @@
  # MyReads 
- ![sample bookcover](https://raw.githubusercontent.com/injune1123/myReads/master/src/img/book_cover_readme.jpg)
+ ![sample bookcover](https://raw.githubusercontent.com/injune1123/myReads/master/src/img/default_book_cover.jpg)
 
 It is a simple website that records users' reads. Users can see books they are currently reading, have read, and want to read on different shelves, and also search books to add to the shelves.
 
