@@ -1,6 +1,10 @@
  # MyReads 
  ![sample bookcover](https://raw.githubusercontent.com/injune1123/myReads/master/src/img/default_book_cover.jpg)
 
+This application is deployed via [Heroku](https://www.heroku.com/). 
+
+🥳[Click here to see the deployed app. ](https://sheltered-crag-51660.herokuapp.com/)🥳
+
 It is a simple website that records users' reads. Users can see books they are currently reading, have read, and want to read on different shelves, and also search books to add to the shelves.
 
 There are two pages on this website: a homepage and a search page.
